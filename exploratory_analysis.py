@@ -6,7 +6,6 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
 def ensure_dirs():
     os.makedirs("results/plots", exist_ok=True)
 
@@ -53,3 +52,4 @@ def summarize_dataset(df):
     with open("results/metrics.txt", "w") as f:
         f.write("===== DATASET SUMMARY =====\n\n")
         f.write(summary.to_string())
+
