@@ -9,7 +9,6 @@ import pandas as pd
 def ensure_dirs():
     os.makedirs("results/plots", exist_ok=True)
 
-
 def plot_rul_distribution(df):
     """Plot and save RUL distribution."""
     ensure_dirs()
@@ -43,7 +42,6 @@ def plot_sensor_trends(df, unit_id=1, sensors=None):
     plt.savefig("results/plots/sensor_trends.png", dpi=300)
     plt.close()
 
-
 def summarize_dataset(df):
     """Save dataset summary statistics."""
     ensure_dirs()
@@ -52,4 +50,5 @@ def summarize_dataset(df):
     with open("results/metrics.txt", "w") as f:
         f.write("===== DATASET SUMMARY =====\n\n")
         f.write(summary.to_string())
+
 
