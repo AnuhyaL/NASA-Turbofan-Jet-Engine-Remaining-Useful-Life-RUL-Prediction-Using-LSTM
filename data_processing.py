@@ -5,7 +5,6 @@ import os
 # Column names for NASA CMAPSS FD datasets
 COLS = ["unit", "cycle"] + [f"op_{i+1}" for i in range(3)] + [f"sensor_{i+1}" for i in range(21)]
 
-
 def load_cmapss(path: str) -> pd.DataFrame:
     """
     Load NASA C-MAPSS dataset from a text file.
@@ -75,4 +74,5 @@ def create_sliding_windows(df: pd.DataFrame, seq_len: int = 50):
             y.append(rul[i])
 
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
+
 
