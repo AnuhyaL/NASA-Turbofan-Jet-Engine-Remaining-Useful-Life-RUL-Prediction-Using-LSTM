@@ -176,3 +176,4 @@ if st.button("Train LSTM Model"):
     st.pyplot(fig)
 else:
     st.info("Click **Train LSTM Model** to start training and see evaluation results.")
+
