@@ -199,7 +199,7 @@ Anuhya Lanke
 
 4	- Added Exploratory Data Analysis
 
-5	- Updated README with results
+5	- Updated README and results
 
 Drashti Sheta
 
@@ -209,9 +209,7 @@ Drashti Sheta
 
 3 - Created prediction plots
 
-4 - Updated README documentation
-
-5 - Final cleanup and testing
+4 - Final cleanup and testing
 
 # Advanced Python & ML Features Used
 
