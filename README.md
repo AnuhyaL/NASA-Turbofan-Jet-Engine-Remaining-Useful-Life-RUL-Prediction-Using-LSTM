@@ -220,7 +220,11 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
   
 * It takes few minutes of time and give the plots
 
-* when you do it manually you can see the MSE for each epochs in the command prompt
+* when you do it manually you can see the MSE for each epochs in the command prompt and results as below 
+  
+<img width="1082" height="545" alt="image" src="https://github.com/user-attachments/assets/b3776bf8-ff67-4d8c-959b-885ce42ea528" />
+
+<img width="350" height="461" alt="image" src="https://github.com/user-attachments/assets/7ac4fa70-e798-41bb-bfee-53de4166dd0d" />
 
 **(The dataset is in the .zip file so need to exact it before uploading it in the code if downloading the code and doing manually)**
 
@@ -229,6 +233,12 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
 **Required to test the dataset on only train_FD001-FD004 in the data**
 
 **Note: The dataset is provided in .zip format as Dataset.zip and folder as data in the Github for direct access**
+
+
+
+
+
+
 
 # Unit Testing (PyTest)
 
