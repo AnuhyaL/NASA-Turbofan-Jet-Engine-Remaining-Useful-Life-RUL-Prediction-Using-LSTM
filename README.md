@@ -122,7 +122,8 @@ A Random Forest regression model was implemented as a baseline to evaluate tradi
 
 • Significantly lower accuracy compared to sequence-based models
 
-• Due to these limitations, Random Forest was not selected as the final model.
+• Due to these limitations, Random Forest was not selected as the final model and not uploaded the file here
+
 
 # LSTM Model (Final Model)
 
