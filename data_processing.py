@@ -49,7 +49,9 @@ def add_rul(df: pd.DataFrame, cap: int | None = None) -> pd.DataFrame:
 
 def create_sliding_windows(df: pd.DataFrame, seq_len: int = 50):
     feature_cols = [c for c in df.columns if c.startswith("op_") or c.startswith("sensor_")]
-
+    """
+    Create fixed-length time-series sequences for LSTM training.
+    """
     
     # Normalize features before sequences
    
@@ -74,5 +76,21 @@ def create_sliding_windows(df: pd.DataFrame, seq_len: int = 50):
             y.append(rul[i])
 
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
+
+class CMAPSSDataset:
+    """
+    Handles loading and preprocessing of CMAPSS dataset.
+    Demonstrates composition with the RULPredictor model.
+    """
+
+    def __init__(self, path, rul_cap=125):
+        self.path = path
+        self.rul_cap = rul_cap
+        self.data = None
+
+    def load_data(self):
+        self.data = load_cmapss(self.path)
+        self.data = add_rul(self.data, cap=self.rul_cap)
+        return self.data
 
 
