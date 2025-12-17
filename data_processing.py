@@ -20,32 +20,25 @@ def load_cmapss(path: str) -> pd.DataFrame:
 
 
 
-def add_rul(df: pd.DataFrame, cap: int | None = None) -> pd.DataFrame:
+def add_rul(df: pd.DataFrame, cap: int | None = None, is_test: bool = False):
     """
-    Compute Remaining Useful Life (RUL) for each row.
+    Compute Remaining Useful Life (RUL).
 
-    RUL = (max cycle for that unit) - (current cycle)
-
-    Optionally cap RUL at a maximum value.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Input DataFrame with columns ["unit", "cycle", ...].
-    cap : int or None
-        Maximum RUL value. If None, no capping is applied.
-
-    Returns
-    -------
-    pd.DataFrame
-        Copy of df with an added 'RUL' column.
+    For training data: RUL = max_cycle - cycle
+    For test data: RUL is unknown → set as NaN
     """
     df = df.copy()
-    max_cycle = df.groupby("unit")["cycle"].transform("max")
-    df["RUL"] = max_cycle - df["cycle"]
-    if cap is not None:
-        df["RUL"] = np.minimum(df["RUL"], cap)
+
+    if not is_test:
+        max_cycle = df.groupby("unit")["cycle"].transform("max")
+        df["RUL"] = max_cycle - df["cycle"]
+        if cap is not None:
+            df["RUL"] = np.minimum(df["RUL"], cap)
+    else:
+        df["RUL"] = np.nan  # no ground truth per cycle in test data
+
     return df
+
 
 
 def create_sliding_windows(df: pd.DataFrame, seq_len: int = 50):
@@ -71,8 +64,11 @@ def create_sliding_windows(df: pd.DataFrame, seq_len: int = 50):
             continue
 
         for i in range(seq_len - 1, len(sub)):
-            X.append(data[i - seq_len + 1 : i + 1])
-            y.append(rul[i])
+            if np.isnan(rul[i]):
+               continue  # skip unlabeled test samples
+
+             X.append(data[i - seq_len + 1 : i + 1])
+             y.append(rul[i])
 
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
