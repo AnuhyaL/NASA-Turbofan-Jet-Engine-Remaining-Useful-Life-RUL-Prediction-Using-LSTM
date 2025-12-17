@@ -383,7 +383,6 @@ Drashti Sheta
 
 • NASA C-MAPSS Turbofan Engine Degradation Dataset
 
-• Public benchmark dataset from NASA Prognostics Center of Excellence
 
 
 # Conclusion
