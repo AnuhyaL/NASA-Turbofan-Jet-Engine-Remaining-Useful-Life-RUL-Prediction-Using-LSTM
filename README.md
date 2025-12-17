@@ -348,9 +348,6 @@ Drashti Sheta
 
 • Public benchmark dataset from NASA Prognostics Center of Excellence
 
-# Results
-
-The proposed LSTM model was evaluated on the NASA CMAPSS FD003 dataset using RMSE and R² metrics. The model achieved an RMSE of approximately 8–15 cycles and an R² score between 0.90 and 0.96, indicating strong predictive accuracy. The Predicted vs. True RUL plots show close alignment with the ideal diagonal, confirming effective learning of degradation trends. Compared to a Random Forest baseline (RMSE ≈ 35–40, R² ≈ 0.20–0.30), the LSTM model significantly outperforms by capturing temporal dependencies in sensor data.
 
 # Conclusion
 
