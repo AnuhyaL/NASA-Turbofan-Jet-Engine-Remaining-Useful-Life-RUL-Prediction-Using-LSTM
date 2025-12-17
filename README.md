@@ -12,6 +12,15 @@ Predictive maintenance is a critical component of modern aerospace systems, enab
 
 This project presents an end-to-end machine learning and deep learning solution for predicting the RUL of turbofan jet engines using the NASA C-MAPSS dataset. Both a traditional machine learning model (Random Forest Regressor) and a deep learning model (Long Short-Term Memory – LSTM) were implemented and evaluated. Based on performance comparison, the LSTM model was selected as the final solution due to its superior ability to capture temporal degradation patterns.
 
+## ▶ Run the Application (No Download Required)
+
+The Streamlit web application is deployed and can be accessed directly using the link below:
+
+🔗 [https://nasa-turbofan-jet-engine.streamlit.app/]
+
+No local installation or code download is required to run the project.
+
+
 # Problem Description
 
 The NASA C-MAPSS dataset contains multivariate time-series sensor readings collected from multiple turbofan engines operating under varying conditions. Each engine degrades over time until failure, but the degradation patterns are complex and non-linear.
