@@ -210,7 +210,13 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
 
 * Check the generated evaluation results in the results/metrics.txt file and observe prediction plots produced during execution.
 
-**(The dataset is in the .zip file so need to exact it before uploading it in the code)**
+**(The dataset is in the .zip file so need to exact it before uploading it in the code if downloading the code and doing manually)**
+
+**The test datasets (FD001–FD004) do not contain per-cycle RUL labels. Therefore, RMSE and R² metrics are reported only on training/validation data. For test datasets, the model generates RUL predictions that can be compared against the provided RUL text files when available.**
+
+**Required to test the dataset on only train_FD001-FD004 in the data**
+
+**Note: The dataset is provided in .zip format as Dataset.zip and folder as data in the Github for direct access**
 
 # Unit Testing (PyTest)
 
