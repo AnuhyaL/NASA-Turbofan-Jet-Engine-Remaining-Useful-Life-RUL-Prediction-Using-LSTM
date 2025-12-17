@@ -47,6 +47,13 @@ class RULPredictor:
         self.model = LSTMRegressor(input_size, hidden_size, num_layers, dropout).to(self.device)
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.num_layers = num_layers  # used for __str__()
+
+    def __str__(self):
+        """
+        String representation of the model (Part-2 requirement).
+        """
+        return f"LSTM RUL Predictor with {self.num_layers} layers"
 
     def fit(self, X: np.ndarray, y: np.ndarray, epochs: int = 10, batch_size: int = 64):
         """
@@ -63,31 +70,41 @@ class RULPredictor:
         batch_size : int
             Batch size for training.
         """
-        self.model.train()
+        try:
+            self.model.train()
 
-        dataset = TensorDataset(
-            torch.from_numpy(X).float(),
-            torch.from_numpy(y).float(),
-        )
-        loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+            dataset = TensorDataset(
+                torch.from_numpy(X).float(),
+                torch.from_numpy(y).float(),
+            )
+            loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-        for epoch in range(epochs):
-            epoch_loss = 0.0
-            for batch_X, batch_y in loader:
-                batch_X = batch_X.to(self.device)
-                batch_y = batch_y.to(self.device)
+            epoch = 0
+            while epoch < epochs:   # while-loop requirement
+                epoch_loss = 0.0
 
-                self.optimizer.zero_grad()
-                preds = self.model(batch_X)
-                loss = self.criterion(preds, batch_y)
-                loss.backward()
-                self.optimizer.step()
+                for batch_X, batch_y in loader:
+                    batch_X = batch_X.to(self.device)
+                    batch_y = batch_y.to(self.device)
 
-                epoch_loss += loss.item() * batch_X.size(0)
+                    self.optimizer.zero_grad()
+                    preds = self.model(batch_X)
+                    loss = self.criterion(preds, batch_y)
+                    loss.backward()
+                    self.optimizer.step()
 
-            epoch_loss /= len(dataset)
-            # You can print this in console; Streamlit will just ignore it.
-            print(f"[Epoch {epoch+1}/{epochs}] Train MSE: {epoch_loss:.4f}")
+                    epoch_loss += loss.item() * batch_X.size(0)
+
+                epoch_loss /= len(dataset)
+                epoch += 1
+
+                # Console logging (safe for Streamlit)
+                print(f"[Epoch {epoch}/{epochs}] Train MSE: {epoch_loss:.4f}")
+
+        except Exception as e:
+            print("❌ Training failed due to an error:")
+            print(e)
+
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -123,3 +140,4 @@ class RULPredictor:
         """
         self.model.load_state_dict(torch.load(path, map_location=self.device))
         self.model.to(self.device)
+
