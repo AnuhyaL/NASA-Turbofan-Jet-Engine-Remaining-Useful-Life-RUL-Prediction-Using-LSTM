@@ -20,6 +20,8 @@ The Streamlit web application is deployed and can be accessed directly using the
 
 No local installation or code download is required to run the project.
 
+**Instruction to download manually are given below as How to run the code** 
+
 
 # Problem Description
 
@@ -186,17 +188,52 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
 
 • View evaluation metrics and prediction plots
 
-# How to Run the Project
+# How to run the code
 
-• git clone
+**Instructions for Downloading, Running, and Verifying the Project** 
 
-• cd NASA-RUL-LSTM
+* Download the project by clicking Code → Download ZIP from the GitHub repository and extract it locally, or clone it using git clone.
 
-• pip install -r requirements.txt
+* Ensure Python 3.12 or 3.13 is installed on the system before running the project.
 
-• streamlit run app.py
+* Install all required dependencies using pip install -r requirements.txt or manually install NumPy, Pandas, Matplotlib, Scikit-learn, PyTorch, Streamlit, and Pytest.
+
+* Verify the project directory structure includes all required files: NASA_RUL_Main.ipynb, app.py, data_processing.py, models.py, utils.py, and the data/ and tests/ folders.
+
+* Open the main Jupyter Notebook (NASA_RUL_Main.ipynb) and run all cells sequentially to execute the complete end-to-end workflow.
+
+* Confirm that the notebook performs data loading, RUL computation, sliding-window sequence creation, LSTM training, and evaluation.
+
+* Launch the interactive web interface using streamlit run app.py to visualize predictions and metrics.
+
+* Run unit tests from the project root using python -m pytest to verify data loading and model functionality.
+
+* Check the generated evaluation results in the results/metrics.txt file and observe prediction plots produced during execution.
 
 **(The dataset is in the .zip file so need to exact it before uploading it in the code)**
+
+# Unit Testing (PyTest)
+
+* This project uses PyTest to validate data processing and model functionality before full execution.
+
+* The file test_data.py verifies the dataset loading and preprocessing pipeline.
+
+* It tests successful loading of the NASA CMAPSS dataset using load_cmapss.
+
+* It confirms correct computation of the Remaining Useful Life (RUL) using add_rul.
+
+* It ensures required columns and dataset structure are handled properly.
+
+* The file test_model.py validates the LSTM-based RUL prediction model.
+
+* It tests model initialization, training execution, and prediction output shape.
+
+* It also verifies the __str__ method for proper model description.
+
+* All tests are executed from the project root using python -m pytest.
+
+* Successful test execution confirms correctness of data handling and model behavior.
+  
 
 # RECOMMENDED SETTINGS FOR EACH DATASET
 
