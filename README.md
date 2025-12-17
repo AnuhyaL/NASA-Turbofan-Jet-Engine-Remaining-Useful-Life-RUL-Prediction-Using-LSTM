@@ -196,6 +196,8 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
 
 • streamlit run app.py
 
+**(The dataset is in the .zip file so need to exact it before uploading it in the code)**
+
 # Contributions
 
 Anuhya Lanke
