@@ -42,20 +42,28 @@ def add_rul(df: pd.DataFrame, cap: int | None = None, is_test: bool = False):
 
 
 def create_sliding_windows(df: pd.DataFrame, seq_len: int = 50):
-    feature_cols = [c for c in df.columns if c.startswith("op_") or c.startswith("sensor_")]
+    """
+    Create fixed-length time-series sequences for LSTM training.
+    """
+    feature_cols = [
+        c for c in df.columns
+        if c.startswith("op_") or c.startswith("sensor_")
+    ]
 
-    
-    # Normalize features before sequences
-   
+    # Normalize features
     from sklearn.preprocessing import StandardScaler
     scaler = StandardScaler()
     df[feature_cols] = scaler.fit_transform(df[feature_cols])
-    
 
-    X, y = [], []
+    X = []
+    y = []
 
     for unit_id in df["unit"].unique():
-        sub = df[df["unit"] == unit_id].sort_values("cycle").reset_index(drop=True)
+        sub = (
+            df[df["unit"] == unit_id]
+            .sort_values("cycle")
+            .reset_index(drop=True)
+        )
 
         data = sub[feature_cols].values
         rul = sub["RUL"].values
@@ -64,11 +72,8 @@ def create_sliding_windows(df: pd.DataFrame, seq_len: int = 50):
             continue
 
         for i in range(seq_len - 1, len(sub)):
-            if np.isnan(rul[i]):
-               continue  # skip unlabeled test samples
-
-             X.append(data[i - seq_len + 1 : i + 1])
-             y.append(rul[i])
+            X.append(data[i - seq_len + 1 : i + 1])
+            y.append(rul[i])
 
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
