@@ -5,7 +5,6 @@ import os
 # Column names for NASA CMAPSS FD datasets
 COLS = ["unit", "cycle"] + [f"op_{i+1}" for i in range(3)] + [f"sensor_{i+1}" for i in range(21)]
 
-
 def load_cmapss(path: str) -> pd.DataFrame:
     """
     Load NASA C-MAPSS dataset from a text file.
