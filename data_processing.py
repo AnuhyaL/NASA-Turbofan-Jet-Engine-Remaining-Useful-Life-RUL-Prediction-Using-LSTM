@@ -18,6 +18,12 @@ def load_cmapss(path: str) -> pd.DataFrame:
     return df
 
 
+def safe_load_dataset(path):
+    try:
+        return load_cmapss(path)
+    except FileNotFoundError:
+        print("ERROR: Dataset file not found.")
+        return None
 
 def add_rul(df: pd.DataFrame, cap: int | None = None) -> pd.DataFrame:
     """
@@ -92,5 +98,6 @@ class CMAPSSDataset:
         self.data = load_cmapss(self.path)
         self.data = add_rul(self.data, cap=self.rul_cap)
         return self.data
+
 
 
