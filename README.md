@@ -218,7 +218,9 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
   
 * then adjust the setting in the data according to the choice of dataset (recommendations given below) and click on the explanatory analysis and also click on the train the model
   
-* It takes few minutes of time and give the plots 
+* It takes few minutes of time and give the plots
+
+* when you do it manually you see the MSE for each epochs in the command prompt
 
 **(The dataset is in the .zip file so need to exact it before uploading it in the code if downloading the code and doing manually)**
 
