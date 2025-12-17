@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+
 from exploratory_analysis import (
     plot_rul_distribution,
     plot_sensor_trends,
@@ -12,138 +13,125 @@ from data_processing import load_cmapss, add_rul, create_sliding_windows
 from models import RULPredictor
 from utils import compute_metrics
 
-# Streamlit Page Config 
+
+# Streamlit Page Config
+
 st.set_page_config(page_title="NASA Turbofan RUL - LSTM", layout="wide")
-st.title("🚀 NASA Turbofan Jet Engine RUL Prediction (using LSTM)")
+st.title("🚀 NASA Turbofan Jet Engine RUL Prediction (Using LSTM)")
+
+# Hide Streamlit default menu/footer
+st.markdown(
+    """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 
-# Streamlit default menu & footer for a cleaner UI
-hide_streamlit_style = """
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: visible;}
-</style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+# Sidebar Controls
 
-
-#  Sidebar Controls 
 st.sidebar.header("Model & Data Settings")
 
-rul_cap = st.sidebar.slider("RUL Cap", min_value=50, max_value=200, value=125, step=5)
-seq_len = st.sidebar.slider("Sequence Length (time steps)", min_value=20, max_value=80, value=50, step=5)
+rul_cap = st.sidebar.slider("RUL Cap", 50, 200, 125, 5)
+seq_len = st.sidebar.slider("Sequence Length", 20, 80, 50, 5)
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("LSTM Hyperparameters")
 
-hidden_size = st.sidebar.slider("Hidden Size", min_value=32, max_value=256, value=64, step=32)
-num_layers = st.sidebar.slider("Number of LSTM Layers", min_value=1, max_value=3, value=2, step=1)
-epochs = st.sidebar.slider("Training Epochs", min_value=3, max_value=30, value=10, step=1)
-batch_size = st.sidebar.slider("Batch Size", min_value=16, max_value=128, value=64, step=16)
-
-st.sidebar.markdown("---")
-st.sidebar.caption("Model: LSTM regressor for Remaining Useful Life (RUL).")
+hidden_size = st.sidebar.slider("Hidden Size", 32, 256, 64, 32)
+num_layers = st.sidebar.slider("LSTM Layers", 1, 3, 2)
+epochs = st.sidebar.slider("Epochs", 3, 30, 10)
+batch_size = st.sidebar.slider("Batch Size", 16, 128, 64, 16)
 
 
-#  Data Loading 
-st.write(" 1. Load Data")
+#  Data Loading
 
-uploaded = st.file_uploader("Upload a CMAPSS train file (.txt)", type=["txt"])
+st.header("1. Load Data")
+
+uploaded = st.file_uploader("Upload a CMAPSS dataset (.txt)", type=["txt"])
 
 try:
     if uploaded is not None:
-        # Safely read uploaded file
         df = pd.read_csv(uploaded, sep=r"\s+", header=None)
-
         if df.shape[1] != 26:
-            raise ValueError(
-                f"Unexpected number of columns: {df.shape[1]} (expected 26)."
-            )
-
-        df.columns = ["unit", "cycle"] + [f"op_{i+1}" for i in range(3)] + [
-            f"sensor_{i+1}" for i in range(21)
-        ]
-        st.success("Custom training file uploaded successfully.")
-
+            raise ValueError("Dataset must contain exactly 26 columns.")
+        df.columns = (
+            ["unit", "cycle"]
+            + [f"op_{i+1}" for i in range(3)]
+            + [f"sensor_{i+1}" for i in range(21)]
+        )
+        st.success("Custom dataset loaded successfully.")
+        is_test_data = "test" in uploaded.name.lower()
     else:
         st.info("Using default dataset: data/train_FD001.txt")
         df = load_cmapss("data/train_FD001.txt")
-
-except FileNotFoundError:
-    st.error("Dataset file not found. Please check the file path.")
-    st.stop()
-
-except ValueError as ve:
-    st.error(f"Invalid dataset format: {ve}")
-    st.stop()
+        is_test_data = False
 
 except Exception as e:
-    st.error(f"Unexpected error while loading data: {e}")
+    st.error(f"Error loading dataset: {e}")
     st.stop()
 
-st.write("Data preview:")
 st.dataframe(df.head())
 
 
+#  RUL Calculation
+
+st.header("2. Compute Remaining Useful Life (RUL)")
+df = add_rul(df, cap=rul_cap, is_test=is_test_data)
+st.dataframe(df[["unit", "cycle", "RUL"]].head())
 
 
-#  RUL Calculation 
-st.write(" 2. Compute Remaining Useful Life (RUL)")
-df = add_rul(df, cap=rul_cap)
+# Exploratory Data Analysis
 
-#  Exploratory Data Analysis 
-st.write("### Exploratory Data Analysis")
+st.subheader("Exploratory Data Analysis")
 
 if st.checkbox("Run Exploratory Data Analysis"):
     plot_rul_distribution(df)
     plot_sensor_trends(df, unit_id=1)
     summarize_dataset(df)
-
-    st.success("EDA completed. Plots and summaries saved to /results folder.")
-
-st.write("Added 'RUL' column (capped at", rul_cap, ").")
-st.write(df[["unit", "cycle", "RUL"]].head())
+    st.success("EDA completed. Outputs saved to results/ folder.")
 
 
+#  Create LSTM Sequences
 
-#  Create LSTM Sequences 
-st.write(" 3. Create LSTM Sequences")
+st.header("3. Create LSTM Sequences")
 
-with st.spinner(f"Creating sliding windows (sequence length = {seq_len})..."):
+with st.spinner("Creating sliding windows..."):
     X, y = create_sliding_windows(df, seq_len=seq_len)
 
-st.write(f"Sequences shape: **X = {X.shape}**, Targets shape: **y = {y.shape}**")
+st.write(f"X shape: {X.shape}")
+st.write(f"y shape: {y.shape}")
 
-if X.shape[0] == 0:
-    st.error("No sequences were created. Try reducing the sequence length.")
+if len(X) == 0:
+    st.error("No sequences created. Reduce sequence length.")
     st.stop()
 
 
-#  Train / Validation Split 
-st.write(" 4. Train / Validation Split (80% / 20%)")
+#  Train / Validation Split
 
-num_samples = X.shape[0]
-indices = np.arange(num_samples)
-np.random.shuffle(indices)
+st.header("4. Train / Validation Split (80 / 20)")
 
-split_idx = int(0.8 * num_samples)
-train_idx = indices[:split_idx]
-val_idx = indices[split_idx:]
+indices = np.random.permutation(len(X))
+split = int(0.8 * len(X))
 
-X_train, y_train = X[train_idx], y[train_idx]
-X_val, y_val = X[val_idx], y[val_idx]
+X_train, y_train = X[indices[:split]], y[indices[:split]]
+X_val, y_val = X[indices[split:]], y[indices[split:]]
 
-st.write(f"Training samples: **{X_train.shape[0]}**, Validation samples: **{X_val.shape[0]}**")
+st.write(f"Training samples: {len(X_train)}")
+st.write(f"Validation samples: {len(X_val)}")
 
 
-#  Train LSTM Button 
-st.write(" 5. Train LSTM Model & Evaluate")
+#  Train & Evaluate Model
+
+st.header("5. Train LSTM Model & Evaluate")
 
 if st.button("Train LSTM Model"):
     input_size = X.shape[2]
 
-    with st.spinner("Training LSTM model... (check terminal for epoch logs)"):
+    with st.spinner("Training LSTM model..."):
         model = RULPredictor(
             input_size=input_size,
             hidden_size=hidden_size,
@@ -152,27 +140,35 @@ if st.button("Train LSTM Model"):
             lr=1e-3,
         )
         model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size)
-
-        # Predict on validation set
         preds = model.predict(X_val)
 
-    #  Metrics 
-    metrics = compute_metrics(y_val, preds)
-    st.subheader("Evaluation Metrics (Validation Set)")
-    st.write(f"**RMSE:** {metrics['rmse']:.2f} cycles")
-    st.write(f"**R² Score:** {metrics['r2']:.3f}")
+    # Metrics
+ 
+    if len(y_val) == 0 or np.isnan(y_val).any():
+        st.warning(
+            "This dataset does not contain per-cycle RUL labels. "
+            "Predictions shown without RMSE/R²."
+        )
+    else:
+        metrics = compute_metrics(y_val, preds)
+        st.subheader("Evaluation Metrics (Validation Set)")
+        st.write(f"**RMSE:** {metrics['rmse']:.2f} cycles")
+        st.write(f"**R² Score:** {metrics['r2']:.3f}")
 
-    # Plot 
-    st.subheader("Predicted vs. True RUL (Validation Set)")
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax.scatter(y_val, preds, alpha=0.4)
-    max_val = max(np.max(y_val), np.max(preds))
-    ax.plot([0, max_val], [0, max_val], "r--")
-    ax.set_xlabel("True RUL")
-    ax.set_ylabel("Predicted RUL")
-    ax.set_title("Predicted vs True RUL (LSTM)")
-    ax.grid(True)
-    fig.savefig("results/plots/predicted_vs_true.png", dpi=300)
-    st.pyplot(fig)
+        # Plot
+        
+        st.subheader("Predicted vs True RUL")
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.scatter(y_val, preds, alpha=0.4)
+        max_val = max(np.max(y_val), np.max(preds))
+        ax.plot([0, max_val], [0, max_val], "r--")
+        ax.set_xlabel("True RUL")
+        ax.set_ylabel("Predicted RUL")
+        ax.set_title("Predicted vs True RUL (LSTM)")
+        ax.grid(True)
+
+        fig.savefig("results/plots/predicted_vs_true.png", dpi=300)
+        st.pyplot(fig)
+
 else:
-    st.info("Click **Train LSTM Model** to start training and see evaluation results.")
+    st.info("Click **Train LSTM Model** to begin training.")
