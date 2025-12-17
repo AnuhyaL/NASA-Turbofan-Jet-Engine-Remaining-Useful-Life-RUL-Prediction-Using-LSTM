@@ -198,6 +198,99 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
 
 **(The dataset is in the .zip file so need to exact it before uploading it in the code)**
 
+# RECOMMENDED SETTINGS FOR EACH DATASET
+
+🔹 FD001 (Baseline / Simple case)
+
+Files used
+
+train_FD001.txt
+
+test_FD001.txt
+
+RUL_FD001.txt
+
+Parameter,	Value
+
+RUL Cap	- 125
+
+Sequence Length	- 30–40
+
+Epochs	- 10–15
+
+Batch Size	- 64
+
+Hidden Size	- 64
+
+LSTM Layers	- 1–2
+
+🔹 FD002 (Multiple operating conditions)
+
+Files used
+
+train_FD002.txt
+
+test_FD002.txt
+
+RUL_FD002.txt
+
+Parameter,	Value
+
+RUL Cap	- 130–150
+Sequence Length	- 40–50
+Epochs	- 15–20
+Batch Size	- 64
+Hidden Size	- 64–128
+LSTM Layers	- 2
+
+🔹 FD003  (MAIN DATASET – RECOMMENDED)
+
+Files used
+
+train_FD003.txt
+
+test_FD003.txt
+
+RUL_FD003.txt
+
+Parameter, Value, Reason
+
+RUL Cap - 125 - Standard in literature
+
+Sequence Length	- 50 -	Captures degradation trend
+
+Epochs	- 20–30 -	Harder faults
+
+Batch Size	- 64	- Stable
+
+Hidden Size	- 64 or 128	- Enough capacity
+
+LSTM Layers	- 2	- Avoid overfitting
+
+🔹 FD004 (Most difficult)
+
+Files used
+
+train_FD004.txt
+
+test_FD004.txt
+
+RUL_FD004.txt
+
+Parameter,	Value
+
+RUL Cap -	150
+
+Sequence Length	- 60
+
+Epochs	- 30
+
+Batch Size	- 32–64
+
+Hidden Size	- 128
+
+LSTM Layers	- 2–3
+
 # Contributions
 
 Anuhya Lanke
