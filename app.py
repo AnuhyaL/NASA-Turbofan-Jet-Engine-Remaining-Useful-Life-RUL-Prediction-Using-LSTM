@@ -2,6 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from exploratory_analysis import (
+    plot_rul_distribution,
+    plot_sensor_trends,
+    summarize_dataset,
+)
 
 from data_processing import load_cmapss, add_rul, create_sliding_windows
 from models import RULPredictor
@@ -86,8 +91,20 @@ st.dataframe(df.head())
 #  RUL Calculation 
 st.write(" 2. Compute Remaining Useful Life (RUL)")
 df = add_rul(df, cap=rul_cap)
+
+#  Exploratory Data Analysis 
+st.write("### Exploratory Data Analysis")
+
+if st.checkbox("Run Exploratory Data Analysis"):
+    plot_rul_distribution(df)
+    plot_sensor_trends(df, unit_id=1)
+    summarize_dataset(df)
+
+    st.success("EDA completed. Plots and summaries saved to /results folder.")
+
 st.write("Added 'RUL' column (capped at", rul_cap, ").")
 st.write(df[["unit", "cycle", "RUL"]].head())
+
 
 
 #  Create LSTM Sequences 
@@ -155,6 +172,7 @@ if st.button("Train LSTM Model"):
     ax.set_ylabel("Predicted RUL")
     ax.set_title("Predicted vs True RUL (LSTM)")
     ax.grid(True)
+    fig.savefig("results/plots/predicted_vs_true.png", dpi=300)
     st.pyplot(fig)
 else:
     st.info("Click **Train LSTM Model** to start training and see evaluation results.")

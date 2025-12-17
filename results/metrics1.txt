@@ -1,0 +1,5 @@
+
+
+===== MODEL EVALUATION =====
+RMSE: 29.97 cycles
+R2 Score: 0.487

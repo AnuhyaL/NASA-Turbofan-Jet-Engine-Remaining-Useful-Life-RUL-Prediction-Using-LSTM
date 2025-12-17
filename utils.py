@@ -2,18 +2,23 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 import math
+import os
 
 
 def compute_metrics(y_true, y_pred):
-    """
-    Compute RMSE and R^2 for regression.
-    """
-    # mean_squared_error returns MSE; take sqrt for RMSE
-    mse = mean_squared_error(y_true, y_pred)
-    rmse = math.sqrt(mse)
+    """Compute and save evaluation metrics."""
+    os.makedirs("results", exist_ok=True)
+
+    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
     r2 = r2_score(y_true, y_pred)
 
-    return {"rmse": float(rmse), "r2": float(r2)}
+    with open("results/metrics.txt", "a") as f:
+        f.write("\n\n===== MODEL EVALUATION =====\n")
+        f.write(f"RMSE: {rmse:.2f} cycles\n")
+        f.write(f"R2 Score: {r2:.3f}\n")
+
+    return {"rmse": rmse, "r2": r2}
+
 
 
 def batch_generator(X, y, batch_size):
