@@ -18,7 +18,7 @@ The Streamlit web application is deployed and can be accessed directly using the
 
 🔗 [https://nasa-turbofan-jet-engine.streamlit.app/]
 
-No local installation or code download is required to run the project.
+No local installation or code download is required to run the project but dataset download is required.
 
 **Instruction to download manually are given below as How to run the code** 
 
@@ -209,6 +209,16 @@ The LSTM model shows a substantial improvement over the baseline, confirming the
 * Run unit tests from the project root using python -m pytest to verify data loading and model functionality.
 
 * Check the generated evaluation results in the results/metrics.txt file and observe prediction plots produced during execution.
+  
+* Or
+  
+*  after downloading the code exact it into a folder and open command prompt in it and type streamlit run app.py
+  
+* it will open streamlit GUI in the default browser then browse the file (dataset in train_FD001-FD004)
+  
+* then adjust the setting in the data according to the choice of dataset (recommendations given below) and click on the explanatory analysis and also click on the train the model
+  
+* It takes few minutes of time and give the plots 
 
 **(The dataset is in the .zip file so need to exact it before uploading it in the code if downloading the code and doing manually)**
 
