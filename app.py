@@ -177,3 +177,6 @@ if st.button("Train LSTM Model"):
 else:
     st.info("Click **Train LSTM Model** to start training and see evaluation results.")
 
+if __name__ == "__main__":
+    print("NASA Turbofan RUL Prediction Application")
+
